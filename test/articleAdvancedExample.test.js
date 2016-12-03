@@ -17,30 +17,31 @@ describe("Declarative policy for environmental and user attributes", ()=>{
             )
         );
     
-    let ctx = {
-        action: 'read'
+    let request = {
+        action: 'read',
+        resource: 'foo'
     };
 
     it('should allow read if user is in development department and time is between 9:00 and 17:00 PST', ()=>{
-        ctx.principal = {
+        request.principal = {
             name: "Bob",
             department: "development"
         };
 
-        ctx.environment = {
+        request.environment = {
             now: moment("2016-06-01T10:00:00").tz("PST")
         };
 
-        expect(policy.check(ctx).code).to.equal(Policy.Result.ALLOWED);
+        expect(policy.check(request).code).to.equal(Policy.Result.ALLOWED);
     });
 
     xit('should disallow read if user is not in development department', ()=>{
-        ctx.principal = {
+        request.principal = {
             name: "Bob",
             department: "human resources"
         };
 
-        ctx.environment = {
+        request.environment = {
             now: moment("2016-06-01T10:00:00").tz("PST")
         };
 

@@ -26,12 +26,15 @@ export function allowIf (testFn) {
     return new Policy(testFn);
 };
 
-export function allow() {
+export function allow(action) {
     return {
-        of: function() {
+        of: function(resource) {
             return {
-                if: function(){
-                    return new Policy(()=> true);
+                if: function(testFn){
+                    return new Policy((ctx)=>{
+                        console.log("Checking context", ctx);
+                        return true;
+                    });
                 }
             }
         }

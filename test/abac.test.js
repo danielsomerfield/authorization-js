@@ -2,7 +2,7 @@ import { expect } from "chai";
 
 import { Policy, allowIf } from "../src/policy";
 
-let ctx = {
+let request = {
     principal: {
         name: "Bob",
         department: "HR"
@@ -17,18 +17,18 @@ let policy = allowIf(ctx => {
 
 describe('Policy', () => {
     it('should allow if function passes', () => {
-        ctx.resource = {
+        request.resource = {
             path: "/HR/documents/document1"
         };
-        let result = policy.check(ctx);
+        let result = policy.check(request);
         expect(result.code).to.equal(Policy.Result.ALLOWED);
     });
 
     it('should not if function does not pass', () => {
-        ctx.resource = {
+        request.resource = {
             path: "/IT/documents/document1"
         };
-        let result = policy.check(ctx);
+        let result = policy.check(request);
         expect(result.code).to.equal(Policy.Result.DENIED);
     });
 });
