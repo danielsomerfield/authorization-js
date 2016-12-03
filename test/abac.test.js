@@ -1,34 +1,9 @@
 import { expect } from "chai";
 
-class Policy {
-    constructor(policyFn) {
-        this.policyFn = policyFn;
-    }
-
-    check(env) {
-        if (this.policyFn(env)) {
-            return {
-                code: Policy.Result.ALLOWED
-            };
-        } else {
-             return {
-                code: Policy.Result.DENIED
-            };           
-        }
-    }
-}
-
-Policy.Result = {
-    ALLOWED: "Allowed",
-    DENIED: "Denied"
-}
-
-Policy.allowIf = function (testFn) {
-    return new Policy(testFn);
-};
+import { Policy, allowIf } from "../src/policy";
 
 let ctx = {
-    principal : {
+    principal: {
         name: "Bob",
         department: "HR"
     },
@@ -36,13 +11,11 @@ let ctx = {
     environment: {}
 }
 
-let policy = Policy.
-    allowIf(ctx => {
-        return new RegExp(`^/${ctx.principal.department}`).test(ctx.resource.path);
-    });
+let policy = allowIf(ctx => {
+    return new RegExp(`^/${ctx.principal.department}`).test(ctx.resource.path);
+});
 
 describe('Policy', () => {
-
     it('should allow if function passes', () => {
         ctx.resource = {
             path: "/HR/documents/document1"

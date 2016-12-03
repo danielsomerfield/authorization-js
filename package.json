@@ -21,9 +21,10 @@
     "babel-jest": "^9.0.0",
     "babel-preset-es2015": "*",
     "babel-preset-react": "*",
+    "chai": "^3.5.0",
     "jest-cli": "*",
     "mocha": "^3.0.2",
-    "chai": "^3.5.0",
+    "moment-timezone": "^0.5.10",
     "webpack": "^1.13.1"
   }
 }
