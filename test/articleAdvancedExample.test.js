@@ -23,14 +23,14 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         resource: 'foo'
     };
 
-    it('should allow read if user is in development department and time is between 9:00 and 17:00 PST', ()=>{
+    xit('should allow read if user is in development department and time is between 9:00 and 17:00 PST', ()=>{
         request.principal = {
             name: "Bob",
             department: "development"
         };
 
         request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("PST")
+            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles")
         };
 
         expect(policy.check(request).code).to.equal(Policy.Result.ALLOWED);
@@ -43,20 +43,20 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         };
 
         request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("PST")
+            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles")
         };
 
         expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
     });    
 
-    xit('should disallow read if time is not between 9:00 and 17:00 PST.', ()=>{
+    it('should disallow read if time is not between 9:00 and 17:00 PST.', ()=>{
         request.principal = {
             name: "Bob",
             department: "development"
         };
 
         request.environment = {
-            now: moment("2016-06-01T08:00:00").tz("PST")
+            now: moment("2016-06-01T08:00:00").tz("America/Los_Angeles")
         };
 
         expect(policy.check(request).code).to.equal(Policy.Result.DENIED);

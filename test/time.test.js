@@ -12,6 +12,11 @@ describe("Time", ()=>{
         expect(now.isBetween(later, later)).to.equal(false);
     });
 
+    it ('should parse times without time zones as UTC', ()=>{
+        let parsed = time('14:05Z');
+        expect(parsed).to.deep.equal(new Time(50700000));
+    });
+
     it ('should parse times with time zones', ()=>{
         let parsed = time('14:05 PST');
         expect(parsed).to.deep.equal(new Time(79500000));
