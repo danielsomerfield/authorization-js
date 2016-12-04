@@ -11,11 +11,10 @@ describe("Declarative policy for environmental and user attributes", ()=>{
     let policy = allow('read')
         .of(anyResource())
         .if(
-            User.department().is('development')
-            // and(
-            //     User.department().is('development'),
-            //     timeOfDay().isBetween(time('9:00 PST'), time('17:00 PST'))
-            // )
+            and(
+                User.department().is('development')
+                // timeOfDay().isBetween(time('9:00 PST'), time('17:00 PST'))
+            )
         );
     
     let request = {
