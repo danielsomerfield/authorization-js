@@ -48,7 +48,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
     });    
 
-    xit('should disallow read if time is not between 9:00 and 17:00 PST.', ()=>{
+    it('should disallow read if time is not between 9:00 and 17:00 PST.', ()=>{
         request.principal = {
             name: "Bob",
             department: "development"
@@ -61,8 +61,19 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
     });
 
-    xit('should disallow write even if all read criteria are met.', ()=>{
+    it('should disallow write even if all read criteria are met.', ()=>{
+        request.principal = {
+            name: "Bob",
+            department: "development"
+        };
 
+        request.action = 'write';
+
+        request.environment = {
+            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+        };
+
+        expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
     });
 
 
