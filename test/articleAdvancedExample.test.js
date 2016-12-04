@@ -57,6 +57,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
     });
 
 
+    //TOOD: test for single argument with and()
     //TODO: deny overrides
     //TODO: resource-specific policies
     //TODO: OR policies
