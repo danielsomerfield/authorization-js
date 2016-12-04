@@ -4,8 +4,8 @@ export class Environment {
 
 export function timeOfDay() {
     return {
-        isBetween: function(){}
+        isBetween: function(request){
+            return ()=>true;
+        }
     }
 }
-
-export function time(){}
