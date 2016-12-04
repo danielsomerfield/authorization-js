@@ -29,7 +29,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         };
 
         request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles")
+            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
         };
 
         expect(policy.check(request).code).to.equal(Policy.Result.ALLOWED);
@@ -42,7 +42,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         };
 
         request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles")
+            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
         };
 
         expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
@@ -55,7 +55,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         };
 
         request.environment = {
-            now: moment("2016-06-01T08:00:00").tz("America/Los_Angeles")
+            now: moment("2016-06-01T08:00:00").tz("America/Los_Angeles").toDate()
         };
 
         expect(policy.check(request).code).to.equal(Policy.Result.DENIED);

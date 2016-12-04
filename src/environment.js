@@ -2,8 +2,6 @@ export class Environment {
 
 }
 
-Environment.nowFactory = () => new Date();
-
 let DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
 class Range {
@@ -28,7 +26,6 @@ class Range {
 
         let start = this.start <= millis ? this.start : this.start - DAY_IN_MILLIS;
         let end = start + this.length;
-
         return start <= millis && end > millis;
     }
 }
@@ -36,8 +33,8 @@ class Range {
 export function timeOfDay() {
     return {
         isDuring: function (startTime, endTime) {
-            return function () {
-                let nowMoment = Environment.nowFactory();
+            return function (request) {
+                let nowMoment = request.environment.now;
 
                 let startDate = new Date(`Jan 1 1970 ${startTime}`).valueOf();
                 let endDate = new Date(`Jan 1 1970 ${endTime}`).valueOf();
