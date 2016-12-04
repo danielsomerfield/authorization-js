@@ -11,10 +11,11 @@ describe("Declarative policy for environmental and user attributes", ()=>{
     let policy = allow('read')
         .of(anyResource())
         .if(
-            and(
-                User.department().is('development'),
-                timeOfDay().isBetween(time('9:00 PST'), time('17:00 PST'))
-            )
+            User.department().is('development')
+            // and(
+            //     User.department().is('development'),
+            //     timeOfDay().isBetween(time('9:00 PST'), time('17:00 PST'))
+            // )
         );
     
     let request = {
@@ -35,7 +36,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         expect(policy.check(request).code).to.equal(Policy.Result.ALLOWED);
     });
 
-    xit('should disallow read if user is not in development department', ()=>{
+    it('should disallow read if user is not in development department', ()=>{
         request.principal = {
             name: "Bob",
             department: "human resources"
@@ -45,7 +46,7 @@ describe("Declarative policy for environmental and user attributes", ()=>{
             now: moment("2016-06-01T10:00:00").tz("PST")
         };
 
-        expect(policy.check(ctx).code).to.equal(Policy.Result.DENIED);
+        expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
     });    
 
     xit('should disallow read if time is not between 9:00 and 17:00 PST.', ()=>{

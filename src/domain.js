@@ -4,8 +4,10 @@ export class User {
 
 User.department = function() {
     return {
-        is: function() {
-
+        is: function(expectedDepartment) {
+            return function(actualRequest) {
+                return expectedDepartment == actualRequest.principal.department;
+            }
         }
     };
 }

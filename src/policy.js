@@ -10,9 +10,9 @@ export class Policy {
                 code: Policy.Result.ALLOWED
             };
         } else {
-             return {
+            return {
                 code: Policy.Result.DENIED
-            };           
+            };
         }
     }
 }
@@ -22,18 +22,24 @@ Policy.Result = {
     DENIED: "Denied"
 }
 
-export function allowIf (testFn) {
+export function allowIf(testFn) {
     return new Policy(testFn);
 };
 
-export function allow(action) {
+export function allow(allowedAction) {
+    let allowedStructure = {
+
+    };
+
     return {
-        of: function(resource) {
+        of: function (resource) {
             return {
-                if: function(testFn){
-                    return new Policy((ctx)=>{
-                        console.log("Checking context", ctx);
-                        return true;
+                if: function (testFunction) {
+                    allowedStructure[allowedAction] = testFunction;
+                    return new Policy((request) => {
+                        let action = request.action;
+                        let testFn = allowedStructure[action];
+                        return testFn && testFn(request);
                     });
                 }
             }
@@ -41,8 +47,9 @@ export function allow(action) {
     };
 };
 
+
 export function anyResource() {
-    return function() {
+    return function () {
 
     };
 }
