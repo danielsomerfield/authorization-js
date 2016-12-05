@@ -26,9 +26,8 @@ export function allowIf(testFn) {
     return new Policy(testFn);
 };
 
-export function allow(allowedAction) {
+export function allow(action) {
     let allowedStructure = {
-        "*": (action)=>false
     };
 
     let addOrCreateEntry = function(resource, action, fn) {
@@ -36,14 +35,18 @@ export function allow(allowedAction) {
         allowedStructure[resource][action] = fn;
     };
 
+    let getTestFunction = function(resource, action) {
+        let actions = allowedStructure[resource] || allowedStructure[Resource.ALL];
+        return actions && actions[action];
+    }
+
     return {
         of: function (resource) {
             return {
                 if: function (testFunction) {
-                    allowedStructure[allowedAction] = addOrCreateEntry(resource, allowedAction, testFunction);
+                    allowedStructure[action] = addOrCreateEntry(resource, action, testFunction);
                     return new Policy((request) => {
-                        let action = request.action;
-                        let testFn = allowedStructure[resource][action];
+                        let testFn = getTestFunction(resourceByPath(request.resource), request.action);
                         return testFn && testFn(request);
                     });
                 }
@@ -64,6 +67,10 @@ export function resourceByPath(name) {
 class Resource {
     constructor(name) {
         this.name = name;
+    }
+
+    toString() {
+        return "Resource: " + this.name;
     }
 }
 

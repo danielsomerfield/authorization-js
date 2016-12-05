@@ -74,7 +74,7 @@ describe("Policies", () => {
         });
     });
 
-    xdescribe("for specific resources", () => {
+    describe("for specific resources", () => {
         let resourceSpecificPolicy = allow('read')
             .of(resourceByPath('/foo'))
             .if(User.department().is('development'));
