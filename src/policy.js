@@ -28,17 +28,22 @@ export function allowIf(testFn) {
 
 export function allow(allowedAction) {
     let allowedStructure = {
+        "*": (action)=>false
+    };
 
+    let addOrCreateEntry = function(resource, action, fn) {
+        allowedStructure[resource] = allowedStructure[resource] || {}
+        allowedStructure[resource][action] = fn;
     };
 
     return {
         of: function (resource) {
             return {
                 if: function (testFunction) {
-                    allowedStructure[allowedAction] = testFunction;
+                    allowedStructure[allowedAction] = addOrCreateEntry(resource, allowedAction, testFunction);
                     return new Policy((request) => {
                         let action = request.action;
-                        let testFn = allowedStructure[action];
+                        let testFn = allowedStructure[resource][action];
                         return testFn && testFn(request);
                     });
                 }
@@ -49,11 +54,17 @@ export function allow(allowedAction) {
 
 
 export function anyResource() {
-    return function () {
+    return Resource.ALL;
+}
 
-    };
+export function resourceByPath(name) {
+    return new Resource(name);
 }
 
 class Resource {
-
+    constructor(name) {
+        this.name = name;
+    }
 }
+
+Resource.ALL = new Resource("*");

@@ -3,7 +3,7 @@ import moment from "moment-timezone"
 
 import { Environment, timeOfDay } from '../src/environment'
 
-describe("Declarative policy for environmental and user attributes", ()=>{
+describe("Environment time", ()=>{
     let request = {
         environment: {
             
@@ -28,13 +28,13 @@ describe("Declarative policy for environmental and user attributes", ()=>{
         expect(timeOfDay().isDuring('16:00Z', '0:05Z')(request)).to.equal(false);
     });
 
-    it("it should adjust to timezones", ()=>{
+    it("should adjust to timezones", ()=>{
         request.environment.now = new Date("2016-06-01 15:01:00 PST");
         expect(timeOfDay().isDuring('14:00 PST', '17:00 PST')(request)).to.equal(true);
         expect(timeOfDay().isDuring('16:00 PST', '17:00 PST')(request)).to.equal(false);
     });
 
-    it("it should work with mixed timezones", ()=>{
+    it("should work with mixed timezones", ()=>{
         request.environment.now = new Date("2016-06-01 15:01:00 PST"); 
         expect(timeOfDay().isDuring('21:00Z', '23:59Z')(request)).to.equal(true);
         expect(timeOfDay().isDuring('21:00Z', '21:59Z')(request)).to.equal(false);

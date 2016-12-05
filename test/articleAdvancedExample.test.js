@@ -1,84 +1,103 @@
 import { expect } from "chai";
 import moment from "moment-timezone"
 
-import { Policy, Resource, anyResource, allow } from "../src/policy";
+import { Policy, Resource, anyResource, allow, resourceByPath } from "../src/policy";
 import { Environment, timeOfDay } from '../src/environment'
 import { User } from '../src/domain'
 import { and } from '../src/boolean'
 
-describe("Declarative policy for environmental and user attributes", ()=>{
+describe("Policies", () => {
 
-    let policy = allow('read')
-        .of(anyResource())
-        .if(
-            and(
-                User.department().is('development'),
-                timeOfDay().isDuring('9:00 PST', '17:00 PST')
-            )
-        );
-    
-    let request = {
-        action: 'read',
-        resource: 'foo'
+    let developerPrincipal = {
+        name: "Becky",
+        department: "development"
     };
 
-    it('should allow read if user is in development department and time is between 9:00 and 17:00 PST', ()=>{
-        request.principal = {
-            name: "Bob",
-            department: "development"
+    describe("for any resource", () => {
+        let anyResourcePolicy = allow('read')
+            .of(anyResource())
+            .if(and(
+                User.department().is('development'),
+                timeOfDay().isDuring('9:00 PST', '17:00 PST'))
+            );
+
+        let request = {
+            action: 'read',
+            resource: 'foo'
         };
 
-        request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
-        };
-
-        expect(policy.check(request).code).to.equal(Policy.Result.ALLOWED);
-    });
-
-    it('should disallow read if user is not in development department', ()=>{
-        request.principal = {
+        let hrPrincipal = {
             name: "Bob",
             department: "human resources"
         };
 
-        request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
-        };
+        it('should allow read if user is in development department and time is between 9:00 and 17:00 PST', () => {
+            request.principal = developerPrincipal;
 
-        expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
-    });    
+            request.environment = {
+                now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+            };
 
-    it('should disallow read if time is not between 9:00 and 17:00 PST.', ()=>{
-        request.principal = {
-            name: "Bob",
-            department: "development"
-        };
+            expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.ALLOWED);
+        });
 
-        request.environment = {
-            now: moment("2016-06-01T08:00:00").tz("America/Los_Angeles").toDate()
-        };
+        it('should disallow read if user is not in development department', () => {
+            request.principal = hrPrincipal;
 
-        expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
+            request.environment = {
+                now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+            };
+
+            expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.DENIED);
+        });
+
+        it('should disallow read if time is not between 9:00 and 17:00 PST.', () => {
+            request.principal = developerPrincipal;
+
+            request.environment = {
+                now: moment("2016-06-01T08:00:00").tz("America/Los_Angeles").toDate()
+            };
+
+            expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.DENIED);
+        });
+
+        it('should disallow write even if all read criteria are met.', () => {
+            request.principal = developerPrincipal;
+
+            request.action = 'write';
+
+            request.environment = {
+                now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+            };
+
+            expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.DENIED);
+        });
     });
 
-    it('should disallow write even if all read criteria are met.', ()=>{
-        request.principal = {
-            name: "Bob",
-            department: "development"
-        };
+    xdescribe("for specific resources", () => {
+        let resourceSpecificPolicy = allow('read')
+            .of(resourceByPath('/foo'))
+            .if(User.department().is('development'));
 
-        request.action = 'write';
+        it('should allow access to resource matching path', ()=>{
+            let request = {
+                action: 'read',
+                resource: '/foo',
+                principal: developerPrincipal
+            };
 
-        request.environment = {
-            now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
-        };
+            expect(resourceSpecificPolicy.check(request).code).to.equal(Policy.Result.ALLOWED);
+        });
 
-        expect(policy.check(request).code).to.equal(Policy.Result.DENIED);
+        it('should deny access to resource not matching path', ()=>{
+            let request = {
+                action: 'read',
+                resource: '/bar',
+                principal: developerPrincipal
+            };
+
+            expect(resourceSpecificPolicy.check(request).code).to.equal(Policy.Result.DENIED);
+        });
     });
 
-
-    //TOOD: test for single argument with and()
-    //TODO: deny overrides
-    //TODO: resource-specific policies
-    //TODO: OR policies
 });
