@@ -1,10 +1,5 @@
 import { expect } from "chai";
-import moment from "moment-timezone"
-
-import { Policy, Resource, anyResource, allowIf, resourceByPath } from "../src/policy";
-import { Environment, timeOfDay } from '../src/environment'
-import { User } from '../src/domain'
-import { and } from '../src/boolean'
+import { Policy } from "../src/policy";
 
 describe("Procedural Policies that are pretty nasty to look at", () => {
 
@@ -24,7 +19,7 @@ describe("Procedural Policies that are pretty nasty to look at", () => {
         date.getUTCMilliseconds();
     };
 
-    let anyResourcePolicy = allowIf((request)=>{
+    let anyResourcePolicy = new Policy((request)=>{
         if (request.action == 'read') {
             if (
                 request.principal.department == 'development' && 
