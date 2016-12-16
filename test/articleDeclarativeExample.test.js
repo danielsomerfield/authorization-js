@@ -18,7 +18,8 @@ describe("Policies", () => {
             .of(anyResource())
             .if(and(
                 User.department().is('development'),
-                timeOfDay().isDuring('9:00 PST', '17:00 PST'))
+                timeOfDay().isDuring('9:00 PST', '17:00 PST')
+                )
             );
 
         let request = {
@@ -35,7 +36,7 @@ describe("Policies", () => {
             request.principal = developerPrincipal;
 
             request.environment = {
-                now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+                now: new Date("2016-06-01 10:00:00 PST")
             };
 
             expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.ALLOWED);
@@ -45,7 +46,7 @@ describe("Policies", () => {
             request.principal = hrPrincipal;
 
             request.environment = {
-                now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+                now: new Date("2016-06-01 10:00:00 PST")
             };
 
             expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.DENIED);
@@ -55,7 +56,7 @@ describe("Policies", () => {
             request.principal = developerPrincipal;
 
             request.environment = {
-                now: moment("2016-06-01T08:00:00").tz("America/Los_Angeles").toDate()
+                now: new Date("2016-06-01 08:00:00 PST")
             };
 
             expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.DENIED);
@@ -67,7 +68,7 @@ describe("Policies", () => {
             request.action = 'write';
 
             request.environment = {
-                now: moment("2016-06-01T10:00:00").tz("America/Los_Angeles").toDate()
+                now: new Date("2016-06-01 10:00:00 PST")
             };
 
             expect(anyResourcePolicy.check(request).code).to.equal(Policy.Result.DENIED);
