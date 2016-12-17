@@ -1,5 +1,6 @@
 import { expect } from "chai";
 import { Policy } from "../src/policy";
+import { Environment, Range } from "../src/environment"
 
 describe("Procedural Policies that are pretty nasty to look at", () => {
 
@@ -8,24 +9,12 @@ describe("Procedural Policies that are pretty nasty to look at", () => {
         department: "development"
     };
 
-    let timeStringAsUTCMillis = function(timeString) {
-        return new Date(`Jan 1 1970 ${timeString}`).valueOf();
-    };
-
-    let dateAsUTCMillis = function(date) {
-        return date.getUTCHours() * 60 * 60 * 1000 +
-        date.getUTCMinutes() * 60 * 1000 +
-        date.getUTCSeconds() * 1000 +
-        date.getUTCMilliseconds();
-    };
-
     let anyResourcePolicy = new Policy((request)=>{
         if (request.action == 'read') {
-            if (
-                request.principal.department == 'development' && 
-                dateAsUTCMillis(request.environment.now) >= timeStringAsUTCMillis("9:00 PST") && 
-                dateAsUTCMillis(request.environment.now) < timeStringAsUTCMillis("17:00 PST")
-            ) {
+            let start = Environment.timeStringAsUTCMillis("9:00 PST");
+            let end = Environment.timeStringAsUTCMillis("17:00 PST");
+            let range = new Range(start, end - start);
+            if (request.principal.department == 'development' && range.isIncluded(request.environment.now)) {
                 return true;
             }
         }

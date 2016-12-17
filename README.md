@@ -17,16 +17,15 @@ This policy will allow a user with a particular group to access any resource dur
 
     new Policy((request)=>{
         if (request.action == 'read') {
-            if (
-                request.principal.department == 'development' && 
-                dateAsUTCMillis(request.environment.now) >= timeStringAsUTCMillis("9:00 PST") && 
-                dateAsUTCMillis(request.environment.now) < timeStringAsUTCMillis("17:00 PST")
-            ) {
+            let start = Environment.timeStringAsUTCMillis("9:00 PST");
+            let end = Environment.timeStringAsUTCMillis("17:00 PST");
+            let range = new Range(start, end - start);
+            if (request.principal.department == 'development' && range.isIncluded(request.environment.now)) {
                 return true;
             }
         }
         return false;
-    });
+    })
         
 # Policy Example 2: A resource-specific policy using the DSL
 This policy will allow a user with a particular group to access the "/foo" resource.

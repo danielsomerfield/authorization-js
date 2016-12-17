@@ -2,9 +2,20 @@ export class Environment {
 
 }
 
+Environment.dateAsUTCMillis = function(date) {
+    return date.getUTCHours() * 60 * 60 * 1000 +
+    date.getUTCMinutes() * 60 * 1000 +
+    date.getUTCSeconds() * 1000 +
+    date.getUTCMilliseconds();
+};
+
+Environment.timeStringAsUTCMillis = function(timeString) {
+    return new Date(`Jan 1 1970 ${timeString}`).valueOf();
+};
+
 let DAY_IN_MILLIS = 24 * 60 * 60 * 1000;
 
-class Range {
+export class Range {
     constructor(start, length) {
         this.start = start;
 
@@ -17,12 +28,7 @@ class Range {
     }
 
     isIncluded(date) {
-        let millis = 
-            date.getUTCHours() * 60 * 60 * 1000 +
-            date.getUTCMinutes() * 60 * 1000 +
-            date.getUTCSeconds() * 1000 +
-            date.getUTCMilliseconds()
-        ;
+        let millis = Environment.dateAsUTCMillis(date);
 
         let start = this.start <= millis ? this.start : this.start - DAY_IN_MILLIS;
         let end = start + this.length;
@@ -36,8 +42,8 @@ export function timeOfDay() {
             return function (request) {
                 let nowMoment = request.environment.now;
 
-                let startDate = new Date(`Jan 1 1970 ${startTime}`).valueOf();
-                let endDate = new Date(`Jan 1 1970 ${endTime}`).valueOf();
+                let startDate = Environment.timeStringAsUTCMillis(startTime);
+                let endDate = Environment.timeStringAsUTCMillis(endTime);
                 let range = new Range(startDate, endDate - startDate);
 
                 return range.isIncluded(nowMoment);
