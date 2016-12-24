@@ -3,7 +3,7 @@ import moment from "moment-timezone"
 
 import { Policy, Resource, anyResource, allow, resourceByPath } from "../src/policy";
 import { Environment, timeOfDay } from '../src/environment'
-import { User } from '../src/domain'
+import { User } from './example-domain'
 import { and } from '../src/boolean'
 
 describe("Policies", () => {
