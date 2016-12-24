@@ -2,9 +2,9 @@ export class Principal {}
 
 Principal.attribute = function(attributeName) {
     return {
-        is: function(expectedValue) {
+        is: function(comparisonFunction) {
             return function(actualRequest) {
-                return expectedValue == actualRequest.principal[attributeName];
+                return comparisonFunction(actualRequest.principal[attributeName]);
             };
         }
     };

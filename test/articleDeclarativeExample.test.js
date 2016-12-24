@@ -4,7 +4,7 @@ import moment from "moment-timezone"
 import { Policy, Resource, anyResource, allow, resourceByPath } from "../src/policy";
 import { Environment, timeOfDay } from '../src/environment'
 import { User } from './example-domain'
-import { and } from '../src/boolean'
+import { equalTo, and } from '../src/operators'
 
 describe("Policies", () => {
 
@@ -17,7 +17,7 @@ describe("Policies", () => {
         let anyResourcePolicy = allow('read')
             .of(anyResource())
             .if(and(
-                User.department().is('development'),
+                User.department().is(equalTo('development')),
                 timeOfDay().isDuring('9:00 PST', '17:00 PST')
                 )
             );
@@ -78,7 +78,7 @@ describe("Policies", () => {
     describe("for specific resources", () => {
         let resourceSpecificPolicy = allow('read')
             .of(resourceByPath('/foo'))
-            .if(User.department().is('development'));
+            .if(User.department().is(equalTo('development')));
 
         it('should allow access to resource matching path', ()=>{
             let request = {

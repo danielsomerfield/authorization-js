@@ -3,3 +3,9 @@ export function and(...testFunctions) {
         return testFunctions.every((fn) => fn(request));
     };
 }
+
+export function equalTo(expectedValue) {
+    return function(actualValue) {
+        return expectedValue == actualValue;
+    };
+}
