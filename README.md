@@ -9,7 +9,7 @@ This policy will allow a user with a particular group to access any resource dur
     allow('read')
         .of(anyResource())
         .if(and(
-            User.department().is('development'),
+            User.department().is(equalTo('development')),
             timeOfDay().isDuring('9:00 PST', '17:00 PST'))
         );
 
@@ -32,4 +32,4 @@ This policy will allow a user with a particular group to access the "/foo" resou
 
     allow('read')
         .of(resourceByPath('/foo'))
-        .if(User.department().is('development'));
+        .if(User.department().is(equalTo('development')));
