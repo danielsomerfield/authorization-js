@@ -9,3 +9,9 @@ export function equalTo(expectedValue) {
         return expectedValue == actualValue;
     };
 }
+
+export function greaterThan(expectedValue) {
+    return function(actualValue) {
+        return actualValue > expectedValue;
+    }
+}
